@@ -3,6 +3,8 @@ node_modules
 /build
 /.svelte-kit
 /package
+/android
+/dist
 .env
 .env.*
 !.env.example
