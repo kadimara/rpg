@@ -1,4 +1,4 @@
-import type { Item } from './item';
+import { Item, type ItemDto } from './item';
 import Vector from './vector';
 
 export class Inventory {
@@ -39,12 +39,11 @@ export class Inventory {
 		return true;
 	}
 
-	add(item: Item, x: number, y: number) {
+	add(dto: ItemDto, x: number, y: number) {
 		const anchor = new Vector(x, y);
+		const item = new Item(dto, anchor);
 		if (this.canDrop(item, anchor)) {
-			const clone = item.clone();
-			clone.anchor = anchor;
-			this.items.push(clone);
+			this.items.push(item);
 		}
 	}
 }

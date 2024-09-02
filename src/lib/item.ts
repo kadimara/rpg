@@ -1,19 +1,32 @@
 import Vector from '$lib/vector';
+import type { StatType } from './stat';
+
+export type ItemDto = {
+	key: string;
+	name: string;
+	description: string;
+	stats?: StatType[];
+	ability: string;
+	cells: number[][];
+};
 
 export class Item {
+	readonly key: string;
 	readonly name: string;
+	readonly description: string;
+	readonly stats?: StatType[];
+	readonly ability: string;
 	readonly cells: Vector[];
-	anchor: Vector = new Vector(0, 0);
+	anchor: Vector;
 
-	constructor(name: string, cells: number[][]) {
-		this.name = name;
-		this.cells = cells.map((cell) => new Vector(cell[0], cell[1]));
-	}
-
-	clone() {
-		return new Item(
-			this.name,
-			this.cells.map((cell) => [cell.x, cell.y])
-		);
+	constructor(dto: ItemDto, anchor: Vector) {
+		this.key = dto.key;
+		this.name = dto.name;
+		this.description = dto.description;
+		this.stats = dto.stats;
+		this.ability = dto.ability;
+		this.cells = dto.cells.map((cell) => new Vector(cell[0], cell[1]));
+		this.anchor = anchor;
+		this.key = dto.key;
 	}
 }
