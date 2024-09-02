@@ -46,4 +46,8 @@ export class Inventory {
 			this.items.push(item);
 		}
 	}
+
+	remove(index: number) {
+		this.items.splice(index, 1);
+	}
 }

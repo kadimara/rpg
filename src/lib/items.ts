@@ -42,13 +42,15 @@ export const items: {
 	},
 	shield: {
 		key: 'shield',
-		name: 'Shield',
+		name: 'Common shield',
 		description: 'A big wooden shield. Something to hide behind.',
-		ability: '',
-		stats: ['defence'],
+		ability: 'If hit, sacrifice the shield to absorb all of any 1 attack.',
+		stats: ['defence', 'defence'],
 		cells: [
 			[0, 0],
-			[0, 1]
+			[1, 0],
+			[0, 1],
+			[1, 1]
 		]
 	},
 	sword: {

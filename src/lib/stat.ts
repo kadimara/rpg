@@ -15,16 +15,30 @@ export const statTypes = [
 
 export type StatType = (typeof statTypes)[number];
 
-export class Stat {
-	readonly type: StatType;
-	readonly value: number;
+export function getStatLabel(stat: StatType) {
+	return stat.replace('_', ' & ').toUpperCase();
+}
 
-	constructor(type: StatType, value: number) {
-		this.type = type;
-		this.value = value;
-	}
-
-	static getLabel(type: StatType) {
-		return type.replace('_', ' & ').toUpperCase();
+export function getStatImage(stat: StatType) {
+	switch (stat) {
+		case 'strength':
+		case 'dexterity':
+		case 'consitution':
+		case 'intelligence':
+		case 'wisdom':
+		case 'charisma':
+			return 'd20.jpg';
+		case 'defence':
+			return 'def.jpg';
+		case 'basic':
+			return 'd4.jpg';
+		case 'weapons_tools':
+			return 'd6.jpg';
+		case 'guns':
+			return 'd8.jpg';
+		case 'energy_magic':
+			return 'd10.jpg';
+		case 'ultimate':
+			return 'd12.jpg';
 	}
 }
