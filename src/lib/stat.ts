@@ -3,7 +3,7 @@ export const statTypes = [
 	'defence',
 	'dexterity',
 	'basic',
-	'consitution',
+	'constitution',
 	'weapons_tools',
 	'intelligence',
 	'guns',
@@ -15,6 +15,8 @@ export const statTypes = [
 
 export type StatType = (typeof statTypes)[number];
 
+export type Stats = { [key in StatType]: number };
+
 export function getStatLabel(stat: StatType) {
 	return stat.replace('_', ' & ').toUpperCase();
 }
@@ -23,22 +25,22 @@ export function getStatImage(stat: StatType) {
 	switch (stat) {
 		case 'strength':
 		case 'dexterity':
-		case 'consitution':
+		case 'constitution':
 		case 'intelligence':
 		case 'wisdom':
 		case 'charisma':
-			return 'd20.jpg';
+			return 'd20.png';
 		case 'defence':
-			return 'def.jpg';
+			return 'def.png';
 		case 'basic':
-			return 'd4.jpg';
+			return 'd4.png';
 		case 'weapons_tools':
-			return 'd6.jpg';
+			return 'd6.png';
 		case 'guns':
-			return 'd8.jpg';
+			return 'd8.png';
 		case 'energy_magic':
-			return 'd10.jpg';
+			return 'd10.png';
 		case 'ultimate':
-			return 'd12.jpg';
+			return 'd12.png';
 	}
 }

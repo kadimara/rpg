@@ -1,5 +1,13 @@
 import { Inventory } from '$lib/inventory.js';
 import { items } from '$lib/items.js';
+import { Storage } from '$lib/storage.js';
+/** @type {import('./$types').LayoutLoad} */
+export async function load({}) {
+	return {
+		inventory,
+		info: await Storage.getInfo()
+	};
+}
 
 export const prerender = true;
 
@@ -11,9 +19,3 @@ inventory.add(items.dagger, 3, 0);
 inventory.add(items.sword, 2, 2);
 inventory.add(items.scroll_fireball, 3, 2);
 inventory.add(items.shield, 3, 3);
-
-export function load({}) {
-	return {
-		inventory
-	};
-}
