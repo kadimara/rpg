@@ -302,8 +302,14 @@ fieldset {
 .gap-2 {
 	gap: 8px;
 }
-.gap-3 {
+.gap-4 {
 	gap: 16px;
+}
+.align-items-center {
+	align-items: center;
+}
+.align-items-baseline {
+	align-items: baseline;
 }
 
 .sticky-b {

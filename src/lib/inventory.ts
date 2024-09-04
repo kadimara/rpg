@@ -1,34 +1,34 @@
-import { Item, type ItemDto } from './item';
-import Vector from './vector';
+import { get } from 'svelte/store';
+import { items } from './data';
+import type { Cell, Item, ItemInfo } from './item';
 
 export class Inventory {
-	readonly columns: number = 0;
-	readonly rows: number = 0;
-	readonly items: Item[] = [];
+	static columns: number = 5;
+	static rows: number = 5;
 
-	constructor(columns: number, rows: number) {
-		this.columns = columns;
-		this.rows = rows;
+	static get items() {
+		return get(items);
 	}
 
-	findItem(cell: Vector): Item | undefined {
-		return this.items.find((item) => {
+	static findItemIndex(cell: Cell): number {
+		return this.items.findIndex((item) => {
 			return this.hitItem(item, cell);
 		});
 	}
 
-	hitItem(item: Item, cell: Vector) {
+	static hitItem(item: Item, cell: Cell) {
+		const anchor = item.anchor;
 		return item.cells.some((c) => {
-			return cell.equals(item.anchor.add(c));
+			return cell[0] == anchor[0] + c[0] && cell[1] == anchor[1] + c[1];
 		});
 	}
 
-	canDrop(item: Item, cell: Vector) {
-		const cellsToCheck = item.cells.map((c) => cell.add(c));
-		const itemsToCheck = this.items.filter((i) => i !== item);
+	static canDrop(item: Item | ItemInfo, cell: Cell) {
+		const cellsToCheck: Cell[] = item.cells.map((c) => [cell[0] + c[0], cell[1] + c[1]]);
+		const itemsToCheck = this.items.filter((value) => value._id != (item as Item)._id);
 		for (cell of cellsToCheck) {
 			// Cell is outside grid.
-			if (cell.x < 0 || this.columns - 1 < cell.x || cell.y < 0 || this.rows - 1 < cell.y) {
+			if (cell[0] < 0 || this.columns - 1 < cell[0] || cell[0] < 0 || this.rows - 1 < cell[1]) {
 				return false;
 			}
 			// Cell is on a used cell.
@@ -39,15 +39,31 @@ export class Inventory {
 		return true;
 	}
 
-	add(dto: ItemDto, x: number, y: number) {
-		const anchor = new Vector(x, y);
-		const item = new Item(dto, anchor);
-		if (this.canDrop(item, anchor)) {
-			this.items.push(item);
+	static add(item: Item | ItemInfo, cell: Cell): boolean {
+		if (this.canDrop(item, cell)) {
+			items.set([...this.items, { ...item, anchor: cell, _id: this.items.length }]);
+			return true;
 		}
+		return false;
 	}
 
-	remove(index: number) {
-		this.items.splice(index, 1);
+	static tryAdd(info: ItemInfo): boolean {
+		for (let y = 0; y < this.rows; y++) {
+			for (let x = 0; x < this.columns; x++) {
+				const added = this.add(info, [x, y]);
+				if (added) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	static remove(_id: number) {
+		items.set(this.items.filter((item) => item._id != _id));
+	}
+
+	static get(_id: number) {
+		return this.items.find((item) => item._id == _id);
 	}
 }

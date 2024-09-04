@@ -13,6 +13,21 @@ export const statTypes = [
 	'ultimate'
 ] as const;
 
+// export const statTypes = [
+// 	'strength',
+// 	'dexterity',
+// 	'defence',
+// 	'constitution',
+// 	'intelligence',
+// 	'wisdom',
+// 	'charisma',
+// 	'basic',
+// 	'weapons_tools',
+// 	'guns',
+// 	'energy_magic',
+// 	'ultimate'
+// ] as const;
+
 export type StatType = (typeof statTypes)[number];
 
 export type Stats = { [key in StatType]: number };

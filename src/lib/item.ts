@@ -1,35 +1,95 @@
-import Vector from '$lib/vector';
 import type { StatType } from './stat';
 
-export type ItemDto = {
-	key: string;
+export type ItemKey = 'bow' | 'dagger' | 'potion_healing' | 'scroll_fireball' | 'shield' | 'sword';
+
+export type Cell = readonly [number, number];
+export class CellUtil {
+	static sub(value: Cell, other: Cell): Cell {
+		return [value[0] - other[0], value[1] - other[1]];
+	}
+	static add(value: Cell, other: Cell): Cell {
+		return [value[0] + other[0], value[1] + other[1]];
+	}
+	static equals(value: Cell, other: Cell): boolean {
+		return value[0] == other[0] && value[1] == other[1];
+	}
+}
+
+export type Item = {
+	_id: number;
+	anchor: Cell;
+} & ItemInfo;
+
+export type ItemInfo = {
+	key: ItemKey;
 	name: string;
 	description: string;
 	stats?: StatType[];
 	ability?: string;
 	singleUse?: boolean;
-	cells: number[][];
+	cells: Cell[];
 };
 
-export class Item {
-	readonly key: string;
-	readonly name: string;
-	readonly description: string;
-	readonly stats?: StatType[];
-	readonly ability?: string;
-	readonly singleUse?: boolean;
-	readonly cells: Vector[];
-	anchor: Vector;
-
-	constructor(dto: ItemDto, anchor: Vector) {
-		this.key = dto.key;
-		this.name = dto.name;
-		this.description = dto.description;
-		this.stats = dto.stats;
-		this.ability = dto.ability;
-		this.singleUse = dto.singleUse;
-		this.cells = dto.cells.map((cell) => new Vector(cell[0], cell[1]));
-		this.anchor = anchor;
-		this.key = dto.key;
+export const itemInfoDictionary: {
+	[key in ItemKey]: ItemInfo;
+} = {
+	bow: {
+		key: 'bow',
+		name: 'Bow',
+		description: 'I fine handcrafted wooden bow.',
+		ability: '',
+		stats: ['dexterity'],
+		cells: [
+			[0, 0],
+			[0, 1],
+			[0, 2]
+		]
+	},
+	dagger: {
+		key: 'dagger',
+		name: 'Dagger',
+		description: 'A small but very sharp knife, great for cutting things up.',
+		ability: '',
+		stats: ['dexterity'],
+		cells: [[0, 0]]
+	},
+	potion_healing: {
+		key: 'potion_healing',
+		name: 'Healing potion',
+		description: 'A weird red fluit that will probably heal you.',
+		ability: 'Single use to heal for 1d4',
+		singleUse: true,
+		cells: [[0, 0]]
+	},
+	scroll_fireball: {
+		key: 'scroll_fireball',
+		name: 'Fireball',
+		description: 'Hot hot hot!',
+		ability: '',
+		stats: ['intelligence'],
+		cells: [[0, 0]]
+	},
+	shield: {
+		key: 'shield',
+		name: 'Common shield',
+		description: 'A big wooden shield. Something to hide behind.',
+		ability: 'If hit, sacrifice the shield to absorb all of any 1 attack.',
+		stats: ['defence', 'defence'],
+		cells: [
+			[0, 0],
+			[1, 0],
+			[0, 1],
+			[1, 1]
+		]
+	},
+	sword: {
+		key: 'sword',
+		name: 'Sword',
+		description: "A man's best friend.",
+		ability: '',
+		cells: [
+			[0, 0],
+			[0, 1]
+		]
 	}
-}
+};

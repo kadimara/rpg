@@ -1,8 +1,7 @@
 import type { ItemDto } from '$lib/item';
-import { items } from '$lib/items';
+import { itemInfoDictionary, type ItemKey } from '$lib/item';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad<{ item: ItemDto }> = ({ params }) => {
-	const item = (items as { [key: string]: ItemDto })[params.slug];
-	return { item };
+	return { item: itemInfoDictionary[params.slug as ItemKey] };
 };
