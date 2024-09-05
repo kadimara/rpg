@@ -10,10 +10,11 @@ export class Inventory {
 		return get(items);
 	}
 
-	static findItemIndex(cell: Cell): number {
-		return this.items.findIndex((item) => {
+	static findItemId(cell: Cell): number {
+		const id = this.items.find((item) => {
 			return this.hitItem(item, cell);
-		});
+		})?._id;
+		return id != undefined ? id : -1;
 	}
 
 	static hitItem(item: Item, cell: Cell) {

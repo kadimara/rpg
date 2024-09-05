@@ -13,3 +13,4 @@ export type Info = {
 export const info = writable<Info>({} as Info);
 export const baseStats = writable<Stats>({} as Stats);
 export const items = writable<Item[]>([]);
+export const notes = writable<string[]>([]);

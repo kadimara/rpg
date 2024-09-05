@@ -1,6 +1,13 @@
 import type { StatType } from './stat';
 
-export type ItemKey = 'bow' | 'dagger' | 'potion_healing' | 'scroll_fireball' | 'shield' | 'sword';
+export type ItemKey =
+	| 'bow'
+	| 'dagger'
+	| 'potion_healing'
+	| 'scroll_fireball'
+	| 'shield'
+	| 'sword'
+	| 'tetris';
 
 export type Cell = readonly [number, number];
 export class CellUtil {
@@ -57,7 +64,7 @@ export const itemInfoDictionary: {
 		key: 'potion_healing',
 		name: 'Healing potion',
 		description: 'A weird red fluit that will probably heal you.',
-		ability: 'Single use to heal for 1d4',
+		ability: 'Single use to heal for 1d4.',
 		singleUse: true,
 		cells: [[0, 0]]
 	},
@@ -90,6 +97,19 @@ export const itemInfoDictionary: {
 		cells: [
 			[0, 0],
 			[0, 1]
+		]
+	},
+	tetris: {
+		key: 'tetris',
+		name: 'Tetris block',
+		description: 'A great test to see more of a tetris style element.',
+		ability: 'Throw it! If hit you stun the enemy for 1 round.',
+		stats: ['basic', 'basic', 'basic', 'basic', 'basic', 'basic'],
+		cells: [
+			[1, 0],
+			[0, 1],
+			[1, 1],
+			[2, 1]
 		]
 	}
 };

@@ -18,17 +18,21 @@
 
 	let gridElement: HTMLDivElement;
 
-	let movingItemIndex: number;
+	let movingItemId: number;
 	let down: Pos = { x: 0, y: 0 };
 	let movingOffset: Pos = { x: 0, y: 0 };
 	let itemOffset: Cell = [0, 0];
 
+	$: uniqueItems = $items.filter((item, pos) => {
+		return $items.findIndex((item2) => item.key === item2.key) == pos;
+	});
+
 	const handleDown = (customEvent: CustomEvent<PointerEvent>) => {
 		const e = customEvent.detail;
 		const cell = getCell(e);
-		movingItemIndex = Inventory.findItemIndex(cell);
-		if (movingItemIndex != -1) {
-			const item = $items[movingItemIndex];
+		movingItemId = Inventory.findItemId(cell);
+		const item = Inventory.get(movingItemId);
+		if (item) {
 			itemOffset = CellUtil.sub(cell, item.anchor);
 		}
 
@@ -44,21 +48,23 @@
 		movingOffset = { x: pos.x - down.x, y: pos.y - down.y };
 	};
 	const handleUp = (e: PointerEvent) => {
-		if (movingItemIndex != -1) {
-			const item = $items[movingItemIndex];
+		const item = Inventory.get(movingItemId);
+		if (item) {
 			const mouseCell = getCell(e);
 			const cell = CellUtil.sub(mouseCell, itemOffset);
 
 			if (Inventory.canDrop(item, cell)) {
-				$items[movingItemIndex].anchor = cell;
+				items.update((items) =>
+					items.map((i) => (i._id == movingItemId ? { ...i, anchor: cell } : i))
+				);
 			}
 		}
-		movingItemIndex = -1;
+		movingItemId = -1;
 		document.removeEventListener('pointermove', handleMove);
 		document.removeEventListener('pointerup', handleUp);
 	};
 
-	const getCell = (e: PointerEvent): Cell => {
+	const getCell = (e: PointerEvent | MouseEvent): Cell => {
 		const position = {
 			x: e.clientX - gridElement.offsetLeft,
 			y: e.clientY - gridElement.offsetTop
@@ -67,45 +73,43 @@
 		return [Math.floor(position.x / cellSize.x), Math.floor(position.y / cellSize.y)];
 	};
 
-	const getItemWidth = (item: Item) => {
-		return Math.max(...item.cells.map((cell) => cell[0])) + 1;
-	};
-	const getItemHeight = (item: Item) => {
-		return Math.max(...item.cells.map((cell) => cell[1])) + 1;
-	};
-
 	const handleRemoveItem = () => {
 		Inventory.remove(dialogItemId);
 		dialogItemId = -1;
 		dialog.close();
 	};
 
-	const handleClickItem = (e: CustomEvent<Item>) => {
-		dialogItemId = e.detail._id;
-		dialog.showModal();
+	const handleClick = (
+		customEvent: CustomEvent<MouseEvent & { currentTarget: EventTarget & HTMLDivElement }>
+	) => {
+		const e = customEvent.detail;
+		const cell = getCell(e);
+		dialogItemId = Inventory.findItemId(cell);
+		dialogItemId > -1 && dialog.showModal();
 	};
 </script>
 
 <Grid
 	{columns}
 	{rows}
-	{movingItemIndex}
+	{movingItemId}
 	{movingOffset}
 	bind:grid={gridElement}
 	bind:items={$items}
 	on:pointerdown={handleDown}
-	on:clickitem={handleClickItem}
+	on:click={handleClick}
 />
-<ul>
-	{#each $items as item, i}
+<div class="flex-col gap-1">
+	<h2>Abilities</h2>
+	{#each uniqueItems as item, i}
 		{#if item.ability}
-			<li>
+			<div class="flex-col">
+				<aside class="small">{item.name.toUpperCase()}</aside>
 				{item.ability}
-				<aside>{item.name.toUpperCase()}</aside>
-			</li>
+			</div>
 		{/if}
 	{/each}
-</ul>
+</div>
 
 <Dialog bind:dialog>
 	{@const item = Inventory.get(dialogItemId)}

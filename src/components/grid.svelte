@@ -6,14 +6,14 @@
 	export let rows: number;
 	export let items: Item[];
 
-	export let movingItemIndex: number = -1;
+	export let movingItemId: number = -1;
 	export let movingOffset: { x: number; y: number } = { x: 0, y: 0 };
 
 	export let grid: HTMLDivElement | null = null;
 
 	// assigning the event dispatcher and typing the payload
 	const dispatch = createEventDispatcher<{
-		clickitem: Item;
+		click: MouseEvent & { currentTarget: EventTarget & HTMLDivElement };
 		pointerdown: PointerEvent;
 	}>();
 
@@ -25,15 +25,18 @@
 	};
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="grid"
 	style="--columns:{columns}; --rows:{rows};"
 	bind:this={grid}
 	on:pointerdown={(e) => dispatch('pointerdown', e)}
+	on:click={(e) => dispatch('click', e)}
 >
 	{#each Array.apply(null, Array(columns * rows)) as value, i (i)}
 		{@const x = i % columns}
-		{@const y = Math.floor(i / rows)}
+		{@const y = Math.floor(i / columns)}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="cell" style="--x:{x}; --y: {y};">
@@ -41,28 +44,38 @@
 		</div>
 	{/each}
 	{#each items as item, i}
-		{@const isMoving = movingItemIndex == i}
+		{@const isMoving = movingItemId == item._id}
 
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			class="item"
 			style="
-                --x:{item.anchor[0]}; 
-                --y: {item.anchor[1]};
-                --width:{getItemWidth(item)}; 
-                --height: {getItemHeight(item)};
+				--x:{item.anchor[0]}; 
+				--y: {item.anchor[1]};
+				--width:{getItemWidth(item)}; 
+				--height: {getItemHeight(item)};
 
 				position: relative;
-                left: {isMoving ? movingOffset.x : 0}px;
-                top: {isMoving ? movingOffset.y : 0}px;
-            "
-			on:click={() => {
-				dispatch('clickitem', item);
-			}}
-		>
-			{item.name}
-		</div>
+				left: {isMoving ? movingOffset.x : 0}px;
+				top: {isMoving ? movingOffset.y : 0}px;
+			"
+		></div>
+		{#each item.cells as cell, i}
+			<div
+				class="item cell"
+				style="
+					--x:{item.anchor[0] + cell[0]}; 
+					--y: {item.anchor[1] + cell[1]}; 
+					position: relative;
+
+					margin-right: {item.cells.find((c) => c[0] == cell[0] + 1 && c[1] == cell[1]) ? -5 : 0}px;
+					margin-bottom: {item.cells.find((c) => c[0] == cell[0] && c[1] == cell[1] + 1) ? -5 : 0}px;
+				"
+			>
+				{#if i == 0}
+					{item.name}
+				{/if}
+			</div>
+		{/each}
 	{/each}
 </div>
 
@@ -90,12 +103,21 @@
 	}
 
 	.item {
+		background: rgba(220, 20, 60, 0.2);
+
+		grid-column: calc(var(--x) + 1) / span var(--width);
+		grid-row: calc(var(--y) + 1) / span var(--height);
+
+		overflow: hidden;
+	}
+
+	.item.cell {
 		padding: 4px;
 		background: crimson;
 		cursor: pointer;
 
-		grid-column: calc(var(--x) + 1) / span var(--width);
-		grid-row: calc(var(--y) + 1) / span var(--height);
+		grid-column: calc(var(--x) + 1) / span 1;
+		grid-row: calc(var(--y) + 1) / span 1;
 
 		overflow: hidden;
 	}

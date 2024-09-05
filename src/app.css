@@ -293,6 +293,9 @@ fieldset {
 	display: flex;
 	flex-direction: row;
 }
+.flex-wrap {
+	flex-wrap: wrap;
+}
 .flexible {
 	flex: 1 1;
 }
@@ -315,4 +318,10 @@ fieldset {
 .sticky-b {
 	position: sticky;
 	bottom: 0;
+}
+
+.small {
+	color: gray;
+	font-size: 10px;
+	font-weight: bold;
 }

@@ -56,12 +56,23 @@ export class Storage {
 			anchor: Cell;
 		}[];
 		return data
-			.filter((value) => value.anchor[0] != null && value.anchor[1] != null)
+			.filter(
+				(value) =>
+					value.anchor[0] != null && value.anchor[1] != null && itemInfoDictionary[value.key]
+			)
 			.map((value, i) => ({ ...itemInfoDictionary[value.key], ...value, _id: i }));
 	}
 
-	// static setNotes(notes: string[]) {
-	// 	Preferences;
-	// }
-	// static getNotes(): string[] {}
+	static setNotes(notes: string[]) {
+		Preferences.set({
+			key: 'notes',
+			value: JSON.stringify(notes)
+		});
+	}
+	static async getNotes(): Promise<string[]> {
+		const result = await Preferences.get({
+			key: 'notes'
+		});
+		return JSON.parse(result.value || '[]') as string[];
+	}
 }

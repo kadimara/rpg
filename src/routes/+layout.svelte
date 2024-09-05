@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import { baseStats, info, items } from '$lib/data';
+	import { baseStats, info, items, notes } from '$lib/data';
 	import { Storage } from '$lib/storage';
 	import { onMount } from 'svelte';
 	import '../app.css';
@@ -16,18 +16,27 @@
 
 		items.set(await Storage.getItems());
 		items.subscribe((items) => Storage.setItems(items));
+
+		notes.set(await Storage.getNotes());
+		notes.subscribe((notes) => {
+			console.log('SET NOTES');
+			Storage.setNotes(notes);
+		});
 	});
 </script>
 
-<div class="flex-col gap-4" style="margin: 8px;">
+<div class="flex-col gap-4" style="padding: 8px;">
 	<slot />
 </div>
+
+<!-- Extra space so content wont be left under the nav when scrolling -->
+<div style="height: 30px;" />
 <nav>
 	<a href="/" class:active={path == '/'}>HOME</a>
 	<a href="/bag" class:active={path == '/bag'}>BAG</a>
 	<a href="/items" class:active={path == '/items'}>ITEMS</a>
 	<a href="/notes" class:active={path == '/notes'}>NOTES</a>
-	<a href="/ai" class:active={path == '/ai'}>AI</a>
+	<!-- <a href="/ai" class:active={path == '/ai'}>AI</a> -->
 </nav>
 
 <style>
@@ -39,6 +48,7 @@
 
 		display: flex;
 		justify-content: space-evenly;
+		background: #222222;
 	}
 
 	nav a {
