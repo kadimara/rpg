@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Inventory } from '$lib/inventory';
 	import { itemInfoDictionary, type ItemInfo } from '$lib/item';
+	import { base } from '$app/paths';
 	import Dialog from '../../components/dialog.svelte';
 
 	let dialog: HTMLDialogElement;
@@ -15,7 +16,7 @@
 
 	const handleAdd = (item: ItemInfo) => {
 		const dropped = Inventory.tryAdd(item);
-		dropped ? goto('/bag') : dialog.showModal();
+		dropped ? goto('{base}/bag') : dialog.showModal();
 	};
 </script>
 
