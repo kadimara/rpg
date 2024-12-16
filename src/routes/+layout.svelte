@@ -3,6 +3,7 @@
 	import { baseStats, info, items, notes } from '$lib/data';
 	import { Storage } from '$lib/storage';
 	import { onMount } from 'svelte';
+	import { base } from '$app/paths';
 	import '../app.css';
 
 	$: path = $page.url.pathname;
@@ -32,10 +33,10 @@
 <!-- Extra space so content wont be left under the nav when scrolling -->
 <div style="height: 30px;" />
 <nav>
-	<a href="/" class:active={path == '/'}>HOME</a>
-	<a href="/bag" class:active={path == '/bag'}>BAG</a>
-	<a href="/items" class:active={path == '/items'}>ITEMS</a>
-	<a href="/notes" class:active={path == '/notes'}>NOTES</a>
+	<a href="{base}/" class:active={path == '/'}>HOME</a>
+	<a href="{base}/bag" class:active={path == '/bag'}>BAG</a>
+	<a href="{base}/items" class:active={path == '/items'}>ITEMS</a>
+	<a href="{base}/notes" class:active={path == '/notes'}>NOTES</a>
 	<!-- <a href="/ai" class:active={path == '/ai'}>AI</a> -->
 </nav>
 
