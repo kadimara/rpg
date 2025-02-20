@@ -2,14 +2,7 @@ import { Preferences } from '@capacitor/preferences';
 import { writable } from 'svelte/store';
 import { itemInfoDictionary, type Cell, type Item, type ItemKey } from './item';
 import type { Stats } from './stat';
-
-export type Info = {
-	name: string;
-	lifeform: string;
-	class: string;
-	story: string;
-	world: string;
-};
+import type { Info } from './data';
 
 export const message = writable('Default message');
 

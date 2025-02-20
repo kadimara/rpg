@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { notes } from '$lib/data';
+	import { afterUpdate, onMount } from 'svelte';
 
-	let footer: HTMLDivElement;
+	let footerElement: HTMLDivElement;
 	let value = '';
 
 	const handleAddNote = () => {
@@ -16,6 +17,17 @@
 			return notes.toSpliced(index, 1);
 		});
 	};
+
+	onMount(() => {
+		notes.subscribe(() => {
+			setTimeout(() => {
+				const scrollingElement = document.scrollingElement;
+				if (scrollingElement) {
+					scrollingElement.scroll({ top: scrollingElement.scrollHeight, behavior: 'smooth' });
+				}
+			}, 0);
+		});
+	});
 </script>
 
 {#each $notes as note, i}
@@ -26,8 +38,8 @@
 	</div>
 {/each}
 
-<div style="height: {footer?.clientHeight}px" />
-<div class="footer flex" bind:this={footer}>
+<div style="height: {footerElement?.clientHeight}px" />
+<div class="footer flex" bind:this={footerElement}>
 	<textarea bind:value rows="5" />
 	<button on:click={handleAddNote}>ADD</button>
 </div>
@@ -39,6 +51,9 @@
 		left: 0;
 		right: 0;
 		padding: 8px;
+
+		max-width: 500px;
+		margin: auto;
 	}
 
 	.footer textarea {
@@ -65,7 +80,8 @@
 		bottom: -4px;
 	}
 
-	.note textarea:focus + button {
+	.note textarea:focus + button,
+	.note button:active {
 		visibility: visible;
 	}
 </style>

@@ -81,7 +81,7 @@ export const itemInfoDictionary: {
 		name: 'Common shield',
 		description: 'A big wooden shield. Something to hide behind.',
 		ability: 'If hit, sacrifice the shield to absorb all of any 1 attack.',
-		stats: ['defence', 'defence'],
+		stats: ['defense', 'defense'],
 		cells: [
 			[0, 0],
 			[1, 0],

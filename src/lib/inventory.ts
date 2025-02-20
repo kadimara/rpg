@@ -29,7 +29,7 @@ export class Inventory {
 		const itemsToCheck = this.items.filter((value) => value._id != (item as Item)._id);
 		for (cell of cellsToCheck) {
 			// Cell is outside grid.
-			if (cell[0] < 0 || this.columns - 1 < cell[0] || cell[0] < 0 || this.rows - 1 < cell[1]) {
+			if (cell[0] < 0 || this.columns - 1 < cell[0] || cell[1] < 0 || this.rows - 1 < cell[1]) {
 				return false;
 			}
 			// Cell is on a used cell.
@@ -42,7 +42,7 @@ export class Inventory {
 
 	static add(item: Item | ItemInfo, cell: Cell): boolean {
 		if (this.canDrop(item, cell)) {
-			items.set([...this.items, { ...item, anchor: cell, _id: this.items.length }]);
+			items.set([...this.items, { ...item, anchor: cell, _id: this.getNextId() }]);
 			return true;
 		}
 		return false;
@@ -66,5 +66,9 @@ export class Inventory {
 
 	static get(_id: number) {
 		return this.items.find((item) => item._id == _id);
+	}
+
+	private static getNextId(): number {
+		return Math.max(-1, ...this.items.map((item) => item._id)) + 1;
 	}
 }

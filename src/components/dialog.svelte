@@ -10,7 +10,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <dialog bind:this={dialog} on:close on:click={handleClick}>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div class="inner" on:click|stopPropagation>
+	<div class="inner flex-col gap-1" on:click|stopPropagation>
 		<slot />
 	</div>
 </dialog>

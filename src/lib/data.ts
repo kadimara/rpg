@@ -8,9 +8,11 @@ export type Info = {
 	class: string;
 	story: string;
 	world: string;
+	hp: number;
+	hearts: number;
 };
 
-export const info = writable<Info>({} as Info);
+export const info = writable<Info>({ hp: 10, hearts: 1 } as Info);
 export const baseStats = writable<Stats>({} as Stats);
 export const items = writable<Item[]>([]);
 export const notes = writable<string[]>([]);

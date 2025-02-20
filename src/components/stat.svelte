@@ -1,47 +1,63 @@
 <script lang="ts">
 	import type { StatType } from '$lib/stat';
 	import { getStatImage, getStatLabel } from '$lib/stat';
+	import { createEventDispatcher } from 'svelte';
 
 	export let stat: StatType;
 	export let baseValue: number;
 	export let lootValue: number;
 	export let value: number;
+
+	// assigning the event dispatcher and typing the payload
+	const dispatch = createEventDispatcher<{
+		click: StatType;
+	}>();
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="flex-col">
-	<div class="stat">{getStatLabel(stat)}</div>
+	<div class="stat">
+		{getStatLabel(stat)}
+	</div>
 	<div class="flex-row gap-1 align-items-center">
-		<div class="value" style="background-image: url({getStatImage(stat)});">
+		<div
+			class="value"
+			style="background-image: url({getStatImage(stat)});"
+			on:click={() => {
+				dispatch('click', stat);
+			}}
+		>
 			{value}
 		</div>
 		<div class="flex-col">
-			<div class="align-items-baseline small input">
-				{#if stat !== 'defence'}
+			<label class="align-items-baseline small input">
+				{#if stat !== 'defense'}
 					BASE <input
 						type="number"
 						style="color: {baseValue ? 'currentColor' : '#222'}"
 						min="0"
-						max="9"
+						max="10"
 						bind:value={baseValue}
 					/>
 				{:else}
 					CON + LOOT = DEF
 				{/if}
-			</div>
-			<div class="align-items-baseline small input">
+			</label>
+			<label class="align-items-baseline small input">
 				LOOT
 				<input
 					type="number"
 					style="color: {lootValue ? 'currentColor' : '#222'}"
 					min="0"
-					max="9"
+					max="10"
 					value={lootValue}
 					disabled
 				/>
-			</div>
+			</label>
 		</div>
 	</div>
-	{#if stat === 'defence'}
+	{#if stat === 'defense'}
 		<div class="small">10 + DEF = ENEMY TO HIT ROLL</div>
 	{/if}
 </div>
@@ -61,7 +77,7 @@
 
 	input {
 		background: transparent;
-		border: none;
+		border: none !important;
 		text-align: center;
 		width: 32px;
 		padding: 2px;

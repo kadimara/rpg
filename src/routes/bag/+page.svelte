@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { items } from '$lib/data';
 	import { Inventory } from '$lib/inventory';
-	import { CellUtil, type Cell, type Item } from '$lib/item';
-	import Dialog from '../../components/dialog.svelte';
-	import Grid from '../../components/grid.svelte';
+	import { CellUtil, type Cell } from '$lib/item';
+	import DialogItem from '../../components/DialogItem.svelte';
+	import Grid from '../../components/Grid.svelte';
 
 	type Pos = {
 		x: number;
@@ -12,6 +12,7 @@
 
 	let dialog: HTMLDialogElement;
 	let dialogItemId = -1;
+	$: dialogItem = Inventory.get(dialogItemId);
 
 	const columns = Inventory.columns;
 	const rows = Inventory.rows;
@@ -79,13 +80,14 @@
 		dialog.close();
 	};
 
-	const handleClick = (
-		customEvent: CustomEvent<MouseEvent & { currentTarget: EventTarget & HTMLDivElement }>
-	) => {
-		const e = customEvent.detail;
-		const cell = getCell(e);
-		dialogItemId = Inventory.findItemId(cell);
-		dialogItemId > -1 && dialog.showModal();
+	const handleClick = (customEvent: CustomEvent<MouseEvent>) => {
+		// Dont open item modal when mouse moved.
+		if (Math.abs(movingOffset.x) < 4 && Math.abs(movingOffset.y) < 4) {
+			const e = customEvent.detail;
+			const cell = getCell(e);
+			dialogItemId = Inventory.findItemId(cell);
+			dialogItemId > -1 && dialog.showModal();
+		}
 	};
 </script>
 
@@ -111,22 +113,11 @@
 	{/each}
 </div>
 
-<Dialog bind:dialog>
-	{@const item = Inventory.get(dialogItemId)}
-	<h2>{item?.name}</h2>
-	<p>
-		{item?.description}
-	</p>
-	<p>
-		{item?.ability}
-	</p>
-	{#if item?.stats}
-		<p>
-			{item?.stats}
-		</p>
-	{/if}
-	{#if item?.singleUse}
-		<button on:click={handleRemoveItem}>USED</button>
-	{/if}
-	<button on:click={handleRemoveItem}>DROP</button>
-</Dialog>
+<DialogItem bind:dialog item={dialogItem}>
+	<div slot="footer" class="flex-row gap-1">
+		{#if dialogItem?.singleUse}
+			<button on:click={handleRemoveItem}>USED</button>
+		{/if}
+		<button on:click={handleRemoveItem}>DROP</button>
+	</div>
+</DialogItem>

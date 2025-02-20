@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Item } from '$lib/item';
 	import { createEventDispatcher } from 'svelte';
+	import type { MouseEventHandler, PointerEventHandler } from 'svelte/elements';
 
 	export let columns: number;
 	export let rows: number;
@@ -13,7 +14,7 @@
 
 	// assigning the event dispatcher and typing the payload
 	const dispatch = createEventDispatcher<{
-		click: MouseEvent & { currentTarget: EventTarget & HTMLDivElement };
+		click: MouseEvent;
 		pointerdown: PointerEvent;
 	}>();
 
@@ -92,7 +93,7 @@
 		max-width: 100%;
 		max-height: 100lvh;
 
-		overflow: visible;
+		overflow: hidden;
 	}
 
 	.cell {
@@ -113,7 +114,7 @@
 
 	.item.cell {
 		padding: 4px;
-		background: crimson;
+		background: #c23530;
 		cursor: pointer;
 
 		grid-column: calc(var(--x) + 1) / span 1;

@@ -3,9 +3,12 @@
 	import { Inventory } from '$lib/inventory';
 	import { itemInfoDictionary, type ItemInfo } from '$lib/item';
 	import { base } from '$app/paths';
+	import DialogItem from '../../components/dialogitem.svelte';
 	import Dialog from '../../components/dialog.svelte';
 
 	let dialog: HTMLDialogElement;
+	let dialogItem: HTMLDialogElement;
+	let dialogItemInfo: ItemInfo;
 	let searchValue: string = '';
 
 	$: searchValues = searchValue.split(' ');
@@ -14,23 +17,38 @@
 		return searchValues.every((value) => name.includes(value));
 	});
 
-	const handleAdd = (item: ItemInfo) => {
-		const dropped = Inventory.tryAdd(item);
-		dropped ? goto('{base}/bag') : dialog.showModal();
+	const handleItemClick = (item: ItemInfo) => {
+		dialogItemInfo = item;
+		dialogItem.showModal();
+	};
+
+	const handleAdd = (item: ItemInfo | undefined) => {
+		if (item) {
+			const dropped = Inventory.tryAdd(item);
+			dropped ? goto('{base}/bag') : dialog.showModal();
+		}
 	};
 </script>
 
 <div class="flex-col gap-1">
 	{#each filteredItems as [key, item]}
 		<div class="flex-row align-items-center">
-			<a class="flexible" href="items/{key}"
-				>{item.name.toUpperCase()}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<div class="flexible" on:click={() => handleItemClick(item)}>
+				{item.name.toUpperCase()}
 				<aside class="small">{item.ability} &nbsp;</aside>
-			</a><button on:click={() => handleAdd(item)}>ADD</button>
+			</div>
+			<button on:click={() => handleAdd(item)}>ADD</button>
 		</div>
 	{/each}
 </div>
 
+<DialogItem bind:dialog={dialogItem} item={dialogItemInfo}>
+	<div slot="footer">
+		<button on:click={() => handleAdd(dialogItemInfo)}>ADD</button>
+	</div>
+</DialogItem>
 <Dialog bind:dialog>There is no more space</Dialog>
 
 <!-- Extra space so content wont be left underneath the footer when scrolling -->
@@ -47,5 +65,8 @@
 		left: 0;
 		right: 0;
 		padding: 8px;
+
+		max-width: 500px;
+		margin: auto;
 	}
 </style>
